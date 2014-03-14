@@ -9,7 +9,7 @@ module Vagrant
       action_hook(:vagrant_chefconfig_cleanup) do |hook|
         hook.before(
           ::Vagrant::Action::Builtin::ConfigValidate,
-          Vagrant::ChefConfig::Action.load_knife_config)
+          Vagrant::ChefConfig::Action.load_chef_config)
       end
 
       config("chefconfig") do

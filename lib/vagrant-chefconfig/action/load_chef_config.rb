@@ -16,6 +16,8 @@ module Vagrant
 
 
         def apply_knife_config(env)
+          puts "APPLYING KNIFE CONFIG!!!!"
+
           return unless chefconfig(env).enabled
 
           chef = chef_provisioner(env)

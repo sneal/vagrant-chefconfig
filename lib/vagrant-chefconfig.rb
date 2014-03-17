@@ -4,7 +4,6 @@ rescue LoadError
   raise "This plugin must run within Vagrant."
 end
 
-require 'vagrant-chefconfig/evilness/chef_client'
 require 'vagrant-chefconfig/version'
 require 'vagrant-chefconfig/errors'
 

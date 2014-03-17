@@ -12,8 +12,7 @@ module Vagrant
 
       def finalize!
         @enabled = true if @enabled == UNSET_VALUE
-        @knife_config_path = File.join(ENV['HOME'], '.chef', 'knife.rb') if
-          @knife_config_path == UNSET_VALUE
+        @knife_config_path = nil if @knife_config_path == UNSET_VALUE
       end
     end
   end

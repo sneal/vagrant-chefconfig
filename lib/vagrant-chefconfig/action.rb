@@ -5,7 +5,6 @@ module Vagrant
 
       def self.load_chef_config
         ::Vagrant::Action::Builder.new.tap do |b|
-          b.use setup
           b.use Vagrant::ChefConfig::Action::LoadChefConfig
         end
       end

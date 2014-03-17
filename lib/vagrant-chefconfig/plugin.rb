@@ -6,9 +6,16 @@ module Vagrant
       Auto-load knife configuration data on Vagrant startup
       DESC
 
-      action_hook(:vagrant_chefconfig_cleanup) do |hook|
+
+      action_hook(:vagrant_chefconfig_validate) do |hook|
         hook.before(
           ::Vagrant::Action::Builtin::ConfigValidate,
+          Vagrant::ChefConfig::Action.load_chef_config)
+      end
+
+      action_hook(:vagrant_chefconfig_provision) do |hook|
+        hook.before(
+          ::Vagrant::Action::Builtin::Provision,
           Vagrant::ChefConfig::Action.load_chef_config)
       end
 

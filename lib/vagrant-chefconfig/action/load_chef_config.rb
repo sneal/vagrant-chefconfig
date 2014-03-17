@@ -23,15 +23,16 @@ module Vagrant
           def apply_knife_config(env)
             return unless LoadChefConfig.chefconfig(env).enabled
 
-            chef = LoadChefConfig.chef_provisioner(env)
-            if chef
-              LoadChefConfig.load_knife_config(env)
+            LoadChefConfig.load_knife_config(env)
 
-              chef.chef_server_url = Chef::Config[:chef_server_url]
-              chef.log_level = Chef::Config[:log_level]
-              chef.validation_key_path = Chef::Config[:validation_key]
-              chef.validation_client_name = Chef::Config[:validation_client_name]
-              chef.environment = Chef::Config[:vagrant_environment]
+            chef_client_provisioners = LoadChefConfig.chef_provisioners(env)
+            chef_client_provisioners.each do |chef_provisioner|
+              chef_config = chef_provisioner.config
+              chef_config.chef_server_url = Chef::Config[:chef_server_url]
+              chef_config.log_level = Chef::Config[:log_level]
+              chef_config.validation_key_path = Chef::Config[:validation_key]
+              chef_config.validation_client_name = Chef::Config[:validation_client_name]
+              chef_config.environment = Chef::Config[:vagrant_environment]
             end
           end
 
@@ -39,10 +40,10 @@ module Vagrant
             Chef::Config.from_file(LoadChefConfig.locate_knife_config_file(env))
           end
 
-          def chef_provisioner(env)
-            @chef_provisioner ||= env[:machine].config.vm.provisioners.find do |p|
+          def chef_provisioners(env)
+            env[:machine].config.vm.provisioners.find_all do |p|
               p.config.is_a? VagrantPlugins::Chef::Config::ChefClient
-            end.config
+            end
           end
 
           def chefconfig(env)

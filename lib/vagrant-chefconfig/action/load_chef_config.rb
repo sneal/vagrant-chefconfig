@@ -1,5 +1,6 @@
 require 'chef'
 require 'chef/knife'
+require 'vagrant/plugin/v2/config'
 
 module Vagrant
   module ChefConfig
@@ -28,11 +29,19 @@ module Vagrant
             chef_client_provisioners = LoadChefConfig.chef_provisioners(env)
             chef_client_provisioners.each do |chef_provisioner|
               chef_config = chef_provisioner.config
-              chef_config.chef_server_url = Chef::Config[:chef_server_url]
-              chef_config.log_level = Chef::Config[:log_level]
-              chef_config.validation_key_path = Chef::Config[:validation_key]
-              chef_config.validation_client_name = Chef::Config[:validation_client_name]
-              chef_config.environment = Chef::Config[:vagrant_environment]
+
+              set_if_default(chef_config, :chef_server_url, :chef_server_url)
+              set_if_default(chef_config, :log_level, :log_level)
+              set_if_default(chef_config, :validation_key_path, :validation_key)
+              set_if_default(chef_config, :validation_client_name, :validation_client_name)
+              set_if_default(chef_config, :environment, :vagrant_environment)
+              set_if_default(chef_config, :client_key_path, :client_key)
+            end
+          end
+
+          def set_if_default(chef_config, config_prop_sym, chef_prop_sym)
+            if chef_config.send(config_prop_sym) != Vagrant::Plugin::V2::Config::UNSET_VALUE
+              chef_config.send("#{config_prop_sym}=", Chef::Config[chef_prop_sym])
             end
           end
 

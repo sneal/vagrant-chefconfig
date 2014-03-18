@@ -28,7 +28,6 @@ Vagrant chef-client attribute -> knife config attribute
 * `validation_key_path` - maps to `validation_key`
 * `validation_client_name` - same
 * `environment` - maps to `vagrant_environment`, this is a non-standard knife config key.
-* `client_key_path` - maps to `client_key`
 * `encrypted_data_bag_secret_key_path` - maps to `encrypted_data_bag_secret`
 
 Values specified directly in the Vagrantfile override any configured values found in your knife configuration file.

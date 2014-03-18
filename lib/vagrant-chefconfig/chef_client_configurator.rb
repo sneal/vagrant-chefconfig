@@ -22,7 +22,6 @@ module Vagrant
           set_if_default(chef_config, :validation_key_path, :validation_key)
           set_if_default(chef_config, :validation_client_name, :validation_client_name)
           set_if_default(chef_config, :environment, :vagrant_environment)
-          set_if_default(chef_config, :client_key_path, :client_key)
           set_if_default(chef_config, :encrypted_data_bag_secret_key_path, :encrypted_data_bag_secret)
         end
       end

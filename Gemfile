@@ -10,6 +10,7 @@ group :development do
   gem "vagrant", :github => 'mitchellh/vagrant'
 end
 
+# This group is read by Vagrant for plugin development
 group :plugins do
   gem "vagrant-chefconfig", path: "."
 end

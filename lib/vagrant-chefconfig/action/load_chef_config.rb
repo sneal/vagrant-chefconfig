@@ -10,7 +10,9 @@ module Vagrant
         end
 
         def call(env)
-          ChefClientConfigurator.new(env).apply_knife_config()
+          if @env[:machine].config.chefconfig.enabled
+            ChefClientConfigurator.new(env).apply_knife_config()
+          end
           @app.call(env)
         end
 

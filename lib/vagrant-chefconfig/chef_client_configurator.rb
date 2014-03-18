@@ -14,8 +14,8 @@ module Vagrant
       def apply_knife_config()
         load_knife_config()
 
-        chef_provisioners.each do |chef_provisioner|
-          chef_config = chef_provisioner.config
+        chef_client_provisioners.each do |chef_client_provisioner|
+          chef_config = chef_client_provisioner.config
 
           set_if_default(chef_config, :chef_server_url, :chef_server_url)
           set_if_default(chef_config, :log_level, :log_level)
@@ -54,10 +54,8 @@ module Vagrant
         end
       end
 
-      def chef_provisioners()
-        @env[:machine].config.vm.provisioners.find_all do |p|
-          p.config.is_a? VagrantPlugins::Chef::Config::ChefClient
-        end
+      def chef_client_provisioners()
+        @env[:machine].config.vm.provisioners.select { |prov| prov.name == :chef_client }
       end
 
       def load_knife_config()

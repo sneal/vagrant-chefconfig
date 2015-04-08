@@ -54,7 +54,10 @@ module Vagrant
       end
 
       def chef_client_provisioners()
-        @env[:machine].config.vm.provisioners.select { |prov| prov.name == :chef_client }
+        @env[:machine].config.vm.provisioners.select do |prov|
+          prov_type = prov.type || prov.name # support for Vagrant > 1.6.5
+          prov_type == :chef_client
+        end
       end
 
       def load_knife_config()

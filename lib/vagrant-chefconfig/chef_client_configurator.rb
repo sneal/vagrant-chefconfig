@@ -55,8 +55,11 @@ module Vagrant
 
       def chef_client_provisioners()
         @env[:machine].config.vm.provisioners.select do |prov|
-          prov_type = prov.type || prov.name # support for Vagrant > 1.6.5
-          prov_type == :chef_client
+          begin
+             prov.type == :chef_client
+           rescue NoMethodError
+             prov.name == :chef_client # support for Vagrant <= 1.6.5
+           end
         end
       end
 

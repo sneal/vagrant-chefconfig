@@ -12,10 +12,13 @@ module Vagrant
       end
 
       def apply_knife_config()
+        provisioners = chef_client_provisioners
+        return if provisioners.length == 0
+
         load_knife_config()
 
-        chef_client_provisioners.each do |chef_client_provisioner|
-          chef_config = chef_client_provisioner.config
+        provisioners.each do |provisioner|
+          chef_config = provisioner.config
 
           set_if_default(chef_config, :chef_server_url, :chef_server_url)
           set_if_default(chef_config, :log_level, :log_level)

@@ -1,6 +1,6 @@
 require 'log4r'
-require 'chef'
-require 'chef/knife'
+require_relative 'knife_config'
+require_relative 'knife_config_locator'
 
 module Vagrant
   module ChefConfig
@@ -20,11 +20,12 @@ module Vagrant
         provisioners.each do |provisioner|
           chef_config = provisioner.config
 
-          set_if_default(chef_config, :chef_server_url, :chef_server_url)
-          set_if_default(chef_config, :log_level, :log_level)
-          set_if_default(chef_config, :validation_key_path, :validation_key)
-          set_if_default(chef_config, :validation_client_name, :validation_client_name)
-          set_if_default(chef_config, :environment, :vagrant_environment)
+          #                           vagrant config key                   knife config key
+          set_if_default(chef_config, :chef_server_url,                    :chef_server_url)
+          set_if_default(chef_config, :log_level,                          :log_level)
+          set_if_default(chef_config, :validation_key_path,                :validation_key)
+          set_if_default(chef_config, :validation_client_name,             :validation_client_name)
+          set_if_default(chef_config, :environment,                        :vagrant_environment)
           set_if_default(chef_config, :encrypted_data_bag_secret_key_path, :encrypted_data_bag_secret)
         end
       end
@@ -32,25 +33,26 @@ module Vagrant
 
       private
 
-      def set_if_default(chef_config, config_prop_sym, chef_prop_sym)
+      def set_if_default(chef_config, config_prop_sym, knife_prop_sym)
         config_val = chef_config.send(config_prop_sym)
+        knife_val = KnifeConfig[knife_prop_sym]
 
         @logger.debug("Vagrantfile config val #{config_prop_sym} = #{config_val}")
-        @logger.debug("Knife config val #{config_prop_sym} = #{Chef::Config[chef_prop_sym]}")
+        @logger.debug("Knife config val #{knife_prop_sym} = #{knife_val}")
 
-        if is_default_value(config_prop_sym, config_val)
+        if is_default_vagrant_value(config_prop_sym, config_val)
           @logger.debug("Overwriting '#{config_prop_sym}' in Vagrantfile chef-client " +
-            "provisioner with '#{Chef::Config[chef_prop_sym]}'")
-          chef_config.send("#{config_prop_sym}=", Chef::Config[chef_prop_sym])
+            "provisioner with '#{knife_val}'")
+          chef_config.send("#{config_prop_sym}=", knife_val)
         end
       end
 
-      def is_default_value(config_prop_sym, config_val)
+      def is_default_vagrant_value(config_prop_sym, config_val)
         case config_prop_sym
         when :validation_client_name
           return config_val == 'chef-validator'
-        when :client_key_path
-          return config_val == '/etc/chef/client.pem'
+        when :log_level
+          return config_val == :info
         else
           return config_val.nil?
         end
@@ -69,14 +71,16 @@ module Vagrant
       def load_knife_config()
         knife_config_path = locate_knife_config_file()
         @logger.debug("Using knife config from '#{knife_config_path}'")
-        Chef::Config.from_file(knife_config_path)
+        KnifeConfig.from_file(knife_config_path)
       end
 
       def locate_knife_config_file()
-        # If the Vagrantfile directly sets the knife.rb path use it, otherwise let
-        # knife find its configuration file
+        # If the Vagrantfile directly sets the knife.rb path use it, otherwise 
+        # default to the .chef directory under the user's home dir
+        # This could be improved to have the same behavior as Chef for finding
+        # the knife.rb relative to the current directory
         knife_config_path = plugin_config().knife_config_path
-        knife_config_path ? knife_config_path : Chef::Knife.locate_config_file()
+        knife_config_path ? knife_config_path : KnifeConfigLocator.new().locate_local_config
       end
 
       def plugin_config()

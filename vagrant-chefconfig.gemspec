@@ -18,9 +18,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "chef", "~> 11"
+  gem.add_runtime_dependency "mixlib-config", "~> 2"
 
   gem.add_development_dependency "rake"
   gem.add_development_dependency "rspec"
-  gem.add_development_dependency "bundler", ">= 1.3"
 end

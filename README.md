@@ -21,14 +21,33 @@ end
 
 The plugin will automatically configure the following Vagrant chef-client provisioner attributes from your knife.rb.
 
-Vagrant chef-client attribute -> knife config attribute
---------------------------------------------------------
-* `chef_server_url` - same
-* `log_level` - same
-* `validation_key_path` - maps to `validation_key`
-* `validation_client_name` - same
-* `environment` - maps to `vagrant_environment`, this is a non-standard knife config key.
-* `encrypted_data_bag_secret_key_path` - maps to `encrypted_data_bag_secret`
+## Vagrant chef-client attribute -> knife config attribute
+<table>
+  <tr>
+    <th>Vagrant attribute name</th>
+    <th>Knife attribute name</th>
+  </tr>
+  <tr>
+    <td>chef_server_url</td>
+    <td>chef_server_url</td>
+  </tr>
+  <tr>
+    <td>log_level</td>
+    <td>log_level</td>
+  </tr>
+  <tr>
+    <td>validation_key_path</td>
+    <td>validation_key</td>
+  </tr>
+  <tr>
+    <td>environment</td>
+    <td>vagrant_environment</td>
+  </tr>
+  <tr>
+    <td>encrypted_data_bag_secret_key_path</td>
+    <td>encrypted_data_bag_secret</td>
+  </tr>
+</table>
 
 Values specified directly in the Vagrantfile override any configured values found in your knife configuration file.
 
@@ -41,13 +60,25 @@ By default the plugin will be enabled and the path to the knife.rb uses the [sta
 
 ## Changelog
 
+### 0.1.0
+
+- Added support for Vagrant 1.7+.
+- Fixed issue 1. Don't read knife.rb if there are no chef-client provisioner blocks in Vagrantfile.
+- Removed dependency upon Chef gem. Handles loading Knife config directly with mixlib-config
+
 ### 0.0.1
 
-Initial release for Vagrant 1.5
+- Initial release for Vagrant 1.5
 
 # Authors
 
 * Shawn Neal (<sneal@sneal.net>)
+
+## Developing
+
+1. Clone repo
+2. `bundle install`
+3. `bundle exec vagrant up`
 
 ## Contributing
 
